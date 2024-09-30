@@ -1,0 +1,131 @@
+/* Basic styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+}
+
+.order-container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+}
+
+.main-content {
+    width: 65%;
+}
+
+.order-list {
+    width: 35%;
+}
+
+.table-container {
+    margin-top: 20px;
+}
+
+.table-list {
+    margin-top: 20px;
+}
+
+/* Style buttons with icons */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px;
+    border: none;
+}
+
+.btn-icon i {
+    margin-right: 0;
+    font-size: 16px;
+}
+
+/* Adjust button padding for better fit */
+.btn-icon {
+    padding: 6px;
+    width: 35px;
+    height: 35px;
+}
+
+.btn-warning .fas {
+    color: white;
+}
+
+.btn-danger .fas {
+    color: white;
+}
+
+/* Tooltip icon adjustments */
+.btn-warning:hover,
+.btn-danger:hover {
+    cursor: pointer;
+}
+/* Set a percentage-based width for the Action column */
+.table th:last-child,
+.table td:last-child {
+    width: 10%; /* Use 10% of the table width for the Action column */
+}
+
+/* Ensure buttons remain compact and aligned horizontally using flexbox */
+.action-buttons {
+    display: flex;                  /* Flexbox for horizontal alignment */
+    justify-content: space-around;  /* Distribute buttons evenly */
+    align-items: center;            /* Align items vertically in the center */
+    gap: 5px;                       /* Space between buttons */
+}
+
+/* Style buttons to fit in the action column dynamically */
+.btn-icon {
+    padding: 5px;         /* Reduced padding to keep buttons compact */
+    width: 40px;          /* Fixed button width to ensure consistency */
+    height: 40px;         /* Ensure height is the same for all buttons */
+    display: flex;        /* Flexbox for centering the icon inside the button */
+    justify-content: center; /* Center the icon inside the button */
+    align-items: center;     /* Align icon vertically in the center */
+}
+
+.btn-icon i {
+    font-size: 16px; /* Control icon size to fit within the smaller button */
+}
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    width: 20%; /* Set the Quantity column width to 10% */
+}
