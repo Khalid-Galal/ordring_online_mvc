@@ -12,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(name = "OrdersTable")
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -25,11 +25,14 @@ public class Order {
     @Column(nullable = false)
     private Integer quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
-    private Room room;
+    @Column(nullable = false)
+    private Double price;
 
-    @ManyToOne
-    @JoinColumn(name = "ordered_by", nullable = false)
-    private User orderedBy;
+//    @ManyToOne
+//    @JoinColumn(name = "room_id", nullable = false)
+//    private Room room;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "ordered_by", nullable = false)
+//    private User orderedBy;
 }

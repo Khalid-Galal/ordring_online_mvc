@@ -1,16 +1,43 @@
-// Initialize an array to store the orders
-let orders = [];
+// Initialize an array to store the orders for the main table
+let orders = JSON.parse(localStorage.getItem('orders')) || []; // Load from localStorage if available
 let isEditing = false; // Track if we're editing an order
 let editIndex = -1;    // Track which order is being edited
 
-// Load orders from localStorage if they exist
-if (localStorage.getItem('orders')) {
-    orders = JSON.parse(localStorage.getItem('orders'));
-    displayOrders();
-    displayOrderList(); // Display the list on the right side
+// Fetch orders for the right-side list from the API when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    fetchOrdersForSideList(); // Fetch and display orders for the right-side list
+    displayOrders(); // Display local orders on the main table when the page loads
+});
+
+// Function to fetch orders from the API for the right-side list
+function fetchOrdersForSideList() {
+    fetch('/orders') // Replace '/orders' with your actual API endpoint
+        .then(response => response.json())
+        .then(data => {
+            displayOrderList(data); // Pass the fetched data to displayOrderList
+        })
+        .catch(error => console.error('Error fetching orders:', error));
 }
 
-// Function to place or update an order
+// Function to display the orders in the right-side list (right order list)
+function displayOrderList(apiOrders) {
+    const orderListTable = document.getElementById("orderListTable");
+    orderListTable.innerHTML = ""; // Clear previous entries
+
+    // Loop through the fetched orders from the API and display them in the right-side list
+    apiOrders.forEach(order => {
+        const row = orderListTable.insertRow();
+        row.insertCell(0).innerText = order.orderName; // Display order name in the first column
+        row.insertCell(1).innerText = order.quantity;  // Display quantity in the second column
+    });
+}
+
+// Save orders to localStorage
+function saveOrdersToLocalStorage() {
+    localStorage.setItem('orders', JSON.stringify(orders)); // Convert array to JSON string and store it
+}
+
+// Function to place or update an order in the main table
 document.getElementById('orderForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -20,45 +47,40 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
 
     // Check if we're editing an existing order
     if (isEditing) {
-        // Update the existing order
         orders[editIndex] = {
-            foodItem: foodItem,
+            orderName: foodItem,
             quantity: quantity
         };
-        isEditing = false; // Reset the editing flag
-        editIndex = -1;    // Reset the edit index
-        document.getElementById("submitButton").innerText = "Place Order"; // Change button text back to "Place Order"
+        isEditing = false;
+        editIndex = -1;
+        document.getElementById("submitButton").innerText = "Place Order"; // Reset button text
     } else {
-        // Create a new order
         const order = {
-            foodItem: foodItem,
+            orderName: foodItem,
             quantity: quantity
         };
-
-        // Add the order to the orders array
         orders.push(order);
     }
 
-    // Save the updated orders array to localStorage
-    saveOrders();
+    // Save the orders to localStorage
+    saveOrdersToLocalStorage();
 
     // Display the updated orders in the table
     displayOrders();
-    displayOrderList(); // Update the list on the right
 
     // Reset the form
     document.getElementById('orderForm').reset();
 });
 
-// Function to display orders in the table
+// Function to display orders in the main table
 function displayOrders() {
     const orderTable = document.getElementById("orderTable");
-    orderTable.innerHTML = "";
+    orderTable.innerHTML = ""; // Clear table before inserting rows
 
-    // Dynamically insert rows into the table
+    // Dynamically insert rows into the main table
     orders.forEach((order, index) => {
         const row = orderTable.insertRow();
-        row.insertCell(0).innerText = order.foodItem;
+        row.insertCell(0).innerText = order.orderName;
         row.insertCell(1).innerText = order.quantity;
         row.insertCell(2).innerHTML = `
         <div class="action-buttons">
@@ -76,42 +98,52 @@ function displayOrders() {
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
 
-// Function to display the orders in the right-side list
-function displayOrderList() {
-    const orderListTable = document.getElementById("orderListTable");
-    orderListTable.innerHTML = "";
-
-    orders.forEach(order => {
-        const row = orderListTable.insertRow();
-        row.insertCell(0).innerText = order.foodItem;
-        row.insertCell(1).innerText = order.quantity;
-    });
-}
-
-// Function to save the orders array to localStorage
-function saveOrders() {
-    localStorage.setItem('orders', JSON.stringify(orders));
-}
-
-// Function to delete an order
-function deleteOrder(index) {
-    orders.splice(index, 1);  // Remove the selected order by index
-    saveOrders();  // Update localStorage
-    displayOrders();  // Refresh the order table
-    displayOrderList();  // Update the list on the right
-}
-
-// Function to edit an order
+// Function to edit an order in the main table
 function editOrder(index) {
-    // Load the selected order's values into the form for editing
     const order = orders[index];
-    document.getElementById("foodItem").value = order.foodItem;
+    document.getElementById("foodItem").value = order.orderName;
     document.getElementById("quantity").value = order.quantity;
 
-    // Set the edit mode
     isEditing = true;
     editIndex = index;
 
-    // Update the "Place Order" button text to "Update Order"
     document.getElementById("submitButton").innerText = "Update Order";
+}
+
+// Function to delete an order from the main table
+function deleteOrder(index) {
+    orders.splice(index, 1); // Remove the selected order by index
+    saveOrdersToLocalStorage(); // Update localStorage after deletion
+    displayOrders(); // Refresh the order table
+}
+
+// Function to handle the "Complete Order" button click
+function completeOrder() {
+    if (orders.length === 0) {
+        alert('No orders to complete.');
+        return;
+    }
+
+    fetch('/orders/bulk', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orders)
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Orders successfully saved to the database.');
+                orders = []; // Clear the local orders array after successful saving
+                saveOrdersToLocalStorage(); // Clear localStorage
+                displayOrders(); // Clear the main table
+                fetchOrdersForSideList(); // Refresh the right-side order list from the backend
+            } else {
+                alert('Failed to save orders.');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving orders:', error);
+            alert('An error occurred while saving the orders.');
+        });
 }
