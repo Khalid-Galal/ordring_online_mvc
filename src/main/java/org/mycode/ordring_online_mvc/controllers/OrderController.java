@@ -23,7 +23,7 @@ public class OrderController {
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
-    @PostMapping("/bulk")
+    @PostMapping("/orders/bulk")
     public ResponseEntity<?> saveOrders(@RequestBody List<Order> orders) {
         orderService.saveAll(orders);
         return ResponseEntity.status(HttpStatus.CREATED).build();

@@ -1,8 +1,11 @@
+//==================Data collected at start of page===============================
+//Table under placing order that collect from user
 // Initialize an array to store the orders for the main table
-let orders = JSON.parse(localStorage.getItem('orders')) || []; // Load from localStorage if available
-let isEditing = false; // Track if we're editing an order
-let editIndex = -1;    // Track which order is being edited
+let orders = JSON.parse(localStorage.getItem('orders')) || [];
+let isEditing = false;
+let editIndex = -1;
 
+//Table right placing order that collect from DataBase
 // Fetch orders for the right-side list from the API when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     fetchOrdersForSideList(); // Fetch and display orders for the right-side list
@@ -19,6 +22,10 @@ function fetchOrdersForSideList() {
         .catch(error => console.error('Error fetching orders:', error));
 }
 
+//==================Data collected at start of page===============================
+
+//==================Logic for right table===============================
+
 // Function to display the orders in the right-side list (right order list)
 function displayOrderList(apiOrders) {
     const orderListTable = document.getElementById("orderListTable");
@@ -31,12 +38,45 @@ function displayOrderList(apiOrders) {
         row.insertCell(1).innerText = order.quantity;  // Display quantity in the second column
     });
 }
+// Function to handle the "Complete Order" button click
+function completeOrder() {
+    if (orders.length === 0) {
+        alert('No orders to complete.');
+        return;
+    }
+
+    fetch('/orders/bulk', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orders)
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Orders successfully saved to the database.');
+                //orders = []; // Clear the local orders array after successful saving
+                //saveOrdersToLocalStorage(); // Clear localStorage
+                displayOrders(); // Clear the main table
+                fetchOrdersForSideList(); // Refresh the right-side order list from the backend
+            } else {
+                alert('Failed to save orders.');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving orders:', error);
+            alert('An error occurred while saving the orders.');
+        });
+}
+
+//==================Logic for right table===============================
+
+//==================Logic for under table===============================
 
 // Save orders to localStorage
 function saveOrdersToLocalStorage() {
     localStorage.setItem('orders', JSON.stringify(orders)); // Convert array to JSON string and store it
 }
-
 // Function to place or update an order in the main table
 document.getElementById('orderForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -57,7 +97,8 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     } else {
         const order = {
             orderName: foodItem,
-            quantity: quantity
+            quantity: quantity,
+            price:0
         };
         orders.push(order);
     }
@@ -71,7 +112,6 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     // Reset the form
     document.getElementById('orderForm').reset();
 });
-
 // Function to display orders in the main table
 function displayOrders() {
     const orderTable = document.getElementById("orderTable");
@@ -87,7 +127,7 @@ function displayOrders() {
             <button class="btn btn-warning btn-sm btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Order" onclick="editOrder(${index})">
                 <i class="fas fa-edit"></i>
             </button>
-            <button class="btn btn-danger btn-sm btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Order" onclick="deleteOrder(${index})">
+            <button class="btn btn-danger btn-sm btn-icon" data-bs-toggle="tooltip" data-bs-placement="top"  title="Delete Order" onclick="deleteOrder(${index})">
                 <i class="fas fa-trash-alt"></i>
             </button>
         </div>`;
@@ -97,19 +137,19 @@ function displayOrders() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
-
 // Function to edit an order in the main table
 function editOrder(index) {
     const order = orders[index];
     document.getElementById("foodItem").value = order.orderName;
     document.getElementById("quantity").value = order.quantity;
+    order.price=0;
+    order.
 
     isEditing = true;
     editIndex = index;
 
     document.getElementById("submitButton").innerText = "Update Order";
 }
-
 // Function to delete an order from the main table
 function deleteOrder(index) {
     orders.splice(index, 1); // Remove the selected order by index
@@ -117,33 +157,4 @@ function deleteOrder(index) {
     displayOrders(); // Refresh the order table
 }
 
-// Function to handle the "Complete Order" button click
-function completeOrder() {
-    if (orders.length === 0) {
-        alert('No orders to complete.');
-        return;
-    }
-
-    fetch('/orders/bulk', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(orders)
-    })
-        .then(response => {
-            if (response.ok) {
-                alert('Orders successfully saved to the database.');
-                orders = []; // Clear the local orders array after successful saving
-                saveOrdersToLocalStorage(); // Clear localStorage
-                displayOrders(); // Clear the main table
-                fetchOrdersForSideList(); // Refresh the right-side order list from the backend
-            } else {
-                alert('Failed to save orders.');
-            }
-        })
-        .catch(error => {
-            console.error('Error saving orders:', error);
-            alert('An error occurred while saving the orders.');
-        });
-}
+//==================Logic for under table===============================

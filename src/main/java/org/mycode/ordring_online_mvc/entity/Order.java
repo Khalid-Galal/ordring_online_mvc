@@ -25,8 +25,12 @@ public class Order {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Double price;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // Foreign key column in 'orders' table referencing 'users'
+    private User user;
 
 //    @ManyToOne
 //    @JoinColumn(name = "room_id", nullable = false)

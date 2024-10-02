@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 
 @Data
 @AllArgsConstructor
@@ -23,9 +25,13 @@ public class User {
     @Column(nullable = false, unique = true, length = 255)
     private String username;
 
+    @Column(nullable = false)
+    private String password ;
+
 
     @Column(nullable = false)
     private Boolean isAdmin = false;
 
-    // Getters and Setters
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders;
 }
