@@ -158,3 +158,13 @@ function deleteOrder(index) {
 }
 
 //==================Logic for under table===============================
+// Storing token in localStorage after login
+localStorage.setItem("authToken", token);
+
+// Sending token in the Authorization header in future requests
+fetch('/order', {
+    method: 'GET',
+    headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("authToken")
+    }
+});
