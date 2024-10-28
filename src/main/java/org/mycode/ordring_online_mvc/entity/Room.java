@@ -9,21 +9,23 @@ import lombok.ToString;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @Entity
-@Table(name = "rooms")
+@Table(name = "Rooms")
 public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roomId;
+    private Long roomID;
 
-    @Column(nullable = false, length = 255)
-    private String roomName;
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", nullable = false)
-    private User createdBy;
+    @Column(nullable = false)
+    private String roomPassword;
 
+    // Constructors, getters, and setters
+    public Room() {}
+
+    // include getters and setters for all fields
 }

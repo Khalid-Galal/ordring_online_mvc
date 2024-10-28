@@ -77,9 +77,34 @@ function completeOrder() {
 function saveOrdersToLocalStorage() {
     localStorage.setItem('orders', JSON.stringify(orders)); // Convert array to JSON string and store it
 }
+// Function to display orders in the main table
+function displayOrders() {
+    const orderTable = document.getElementById("orderTable");
+    orderTable.innerHTML = ""; // Clear table before inserting rows
+
+    // Dynamically insert rows into the main table
+    orders.forEach((order, index) => {
+        const row = orderTable.insertRow();
+        row.insertCell(0).innerText = order.orderName;
+        row.insertCell(1).innerText = order.quantity;
+        row.insertCell(2).innerHTML = `
+        <div class="action-buttons">
+            <button class="btn btn-warning btn-sm btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Order" onclick="editOrder(${index})">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-danger btn-sm btn-icon" data-bs-toggle="tooltip" data-bs-placement="top"  title="Delete Order" onclick="deleteOrder(${index})">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>`;
+    });
+
+    // Re-initialize tooltips after adding new rows
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+}
 // Function to place or update an order in the main table
 document.getElementById('orderForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+    // event.preventDefault();
 
     // Get the values from the form
     const foodItem = document.getElementById("foodItem").value;
@@ -112,39 +137,13 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     // Reset the form
     document.getElementById('orderForm').reset();
 });
-// Function to display orders in the main table
-function displayOrders() {
-    const orderTable = document.getElementById("orderTable");
-    orderTable.innerHTML = ""; // Clear table before inserting rows
 
-    // Dynamically insert rows into the main table
-    orders.forEach((order, index) => {
-        const row = orderTable.insertRow();
-        row.insertCell(0).innerText = order.orderName;
-        row.insertCell(1).innerText = order.quantity;
-        row.insertCell(2).innerHTML = `
-        <div class="action-buttons">
-            <button class="btn btn-warning btn-sm btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Order" onclick="editOrder(${index})">
-                <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-danger btn-sm btn-icon" data-bs-toggle="tooltip" data-bs-placement="top"  title="Delete Order" onclick="deleteOrder(${index})">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        </div>`;
-    });
-
-    // Re-initialize tooltips after adding new rows
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-}
 // Function to edit an order in the main table
 function editOrder(index) {
     const order = orders[index];
     document.getElementById("foodItem").value = order.orderName;
     document.getElementById("quantity").value = order.quantity;
-    order.price=0;
-    order.
-
+    // order.price=0;
     isEditing = true;
     editIndex = index;
 

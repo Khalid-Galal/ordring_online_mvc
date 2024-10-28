@@ -1,5 +1,0 @@
-CREATE TABLE IF NOT EXISTS `users` (
-    `user_id` INT AUTO_INCREMENT PRIMARY KEY,
-    `username` VARCHAR(255) NOT NULL,
-    `is_admin` BOOLEAN NOT NULL DEFAULT FALSE
-    );

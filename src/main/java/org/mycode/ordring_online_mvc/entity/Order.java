@@ -9,34 +9,34 @@ import lombok.ToString;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @Entity
-@Table(name = "orders")
+@Table(name = "Orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
-
-    @Column(nullable = false, length = 255)
-    private String orderName;
+    private Long orderID;
 
     @Column(nullable = false)
-    private Integer quantity;
+    private String itemName;
 
-    @Column(nullable = true)
-    private Double price;
+    @Column(nullable = false)
+    private int quantity;
+
+    @Column(nullable = false)
+    private double price;
+
+    @Column
+    private String note;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Foreign key column in 'orders' table referencing 'users'
+    @JoinColumn(name = "userID", referencedColumnName = "userID")
     private User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "room_id", nullable = false)
-//    private Room room;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "ordered_by", nullable = false)
-//    private User orderedBy;
+    // Constructors, getters, and setters
+    public Order() {}
+
+    // include getters and setters for all fields
 }
+
